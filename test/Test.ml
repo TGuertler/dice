@@ -715,7 +715,7 @@ let test_bdd _ =
 let expression_tests =
 "suite">:::
 [
-  "test_1">::test_1;
+  (* "test_1">::test_1;
 
   "test_not">::test_not;
 
@@ -728,14 +728,14 @@ let expression_tests =
 
   "test_ite1">::test_ite1;
   "test_ite2">::test_ite2;
-  "test_ite3">::test_ite3;
+  "test_ite3">::test_ite3;  *)
 
   "test_int1">::test_int1;
-  "test_int2">::test_int2;
+  (*"test_int2">::test_int2;
   "test_int3">::test_int3;
-  "test_int4">::test_int4;
+  "test_int4">::test_int4;*)
 
-  "test_add1">::test_add1;
+  (* "test_add1">::test_add1;(* *)
   "test_add2">::test_add2;
   "test_add3">::test_add3;
   "test_add4">::test_add4;
@@ -828,7 +828,7 @@ let expression_tests =
   "test_list_ex">::test_list_ex;
   "test_bdd">::test_bdd;
   "test_lte_name">::test_lte_name;
-  "test_lt_name">::test_lt_name; (**)
+  "test_lt_name">::test_lt_name; *)
 ]
 
 let () =

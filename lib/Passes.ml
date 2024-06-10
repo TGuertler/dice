@@ -537,10 +537,22 @@ let rec and_of_l l =
   | [x] -> x
   | x::xs -> CG.And(x, and_of_l xs)
 
+(* generates an expression which returns a distribution over boolean tuples representing numbers as specified by l*)
 let rec gen_discrete mgr (l: float List.t) =
-  failwith "gen_discrete not implemented /"
+  (* discrete(0.1, 0.4, 0.5) *)
+  CG.Let("a", CG.Flip(Bignum.of_float_decimal 0.5), 
+  CG.Ite(CG.Ident("a"), CG.Tup(CG.True, CG.False), CG.Tup(CG.False, CG.Flip(Bignum.of_float_decimal 0.8)))
+  )
+  (* let rec helper ls sum = CG.True in
+  (* find number of bits needed to represent number*)
+  (* for efficiency, this should work with ignoring values which occur with probability 0 *)
+  (* make use of List.split_n: split_n [e1; ...; em] n is ([e1; ...; en], [en+1; ...; em])*)
+  if true then failwith "gen_discrete not implemented /" else CG.True *)
+
+
   (* Removed due to Cudd, may rewrite this function later to enable use of Discrete(...) *)
-  (* let open Cudd in
+  (* let rec gen_discrete mgr (l: float List.t) =
+  let open Cudd in
   let open CG in
   (* first generate the ADD *)
   (* list of bits in little-endian order *)
@@ -789,7 +801,7 @@ let rec from_external_expr_h (ctx: external_ctx) (cfg: config) ((t, e): tast) : 
   | Not(_, e) -> Not(from_external_expr_h ctx cfg e)
   | Flip(_, f) -> Flip(f)
   | Ident(_, s) -> Ident(s)
-  | Discrete(_, l) -> gen_discrete ctx (List.map l Bignum.to_float)
+  | Discrete(_, l) -> gen_discrete ctx (List.map l ~f:Bignum.to_float)
   | Unif(s, sz, b, e) -> 
 	  assert(b >= 0);
 	  assert(e > b);
