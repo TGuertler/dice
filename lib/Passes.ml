@@ -173,7 +173,7 @@ let num_paths (p: EG.program) : LogProbability.t =
     | _ -> failwith "unreachable, functions inlined" in
   helper inlined.body
 
-let num_binary_digits d = int_of_float (floor (Util.log2 (float_of_int (d)))) + 1
+let num_binary_digits d = int_of_float (Float.round_down (Util.log2 (float_of_int (d)))) + 1
 
 (** converts a little-endian binary vector into an integer *)
 let bin_to_int l =
@@ -194,7 +194,8 @@ let int_to_bin final_sz d =
   padding @ r
 
 (** builds a list of all assignments to `l`, a list of (expr, bdd) *)
-let rec all_assignments mgr l =
+(* Removed due to Cudd *)
+(* let rec all_assignments mgr l =
   let open Cudd in
   let open CG in
   match l with
@@ -204,7 +205,7 @@ let rec all_assignments mgr l =
         ~f:(fun (constr, bdd) -> And(cur_constraint, constr), Bdd.dand cur_bdd bdd) in
     let l2 = List.map (all_assignments mgr xs)
         ~f:(fun (constr, bdd) -> And(Not(cur_constraint), constr), Bdd.dand (Bdd.dnot cur_bdd) bdd) in
-    l1 @ l2
+    l1 @ l2 *)
 
 let fold_with_seen l ~init ~f =
   let (_, r) = List.fold l ~init:(([], init)) ~f:(fun (seen, acc) i ->
@@ -383,7 +384,7 @@ let rec type_of (cfg: config) (ctx: typ_ctx) (env: EG.tenv) (e: EG.eexpr) : tast
                            src.startpos.pos_lnum (get_col src.startpos)))) else ();
     (TInt(sz), Int(src, sz, v))
   | Discrete(src, l) ->
-    let sum = List.fold (List.map l Bignum.to_float) ~init:0.0 ~f:(fun acc i -> acc +. i) in
+    let sum = List.fold (List.map l ~f:Bignum.to_float) ~init:0.0 ~f:(fun acc i -> acc +. i) in
     if not (within_epsilon sum 1.0) then
       raise (Type_error (Format.sprintf "Type error at line %d column %d: discrete parameters must sum to 1, got %f"
                            src.startpos.pos_lnum (get_col src.startpos) sum))
@@ -537,7 +538,9 @@ let rec and_of_l l =
   | x::xs -> CG.And(x, and_of_l xs)
 
 let rec gen_discrete mgr (l: float List.t) =
-  let open Cudd in
+  failwith "gen_discrete not implemented /"
+  (* Removed due to Cudd, may rewrite this function later to enable use of Discrete(...) *)
+  (* let open Cudd in
   let open CG in
   (* first generate the ADD *)
   (* list of bits in little-endian order *)
@@ -576,7 +579,7 @@ let rec gen_discrete mgr (l: float List.t) =
     ) in
   (* now finally build the entire let assignment *)
   let inner_body = mk_dfs_tuple (List.map bits ~f:fst) in
-  List.fold assgn ~init:inner_body ~f:(fun acc (Ident(name), body) -> Let(name, body, acc))
+  List.fold assgn ~init:inner_body ~f:(fun acc (Ident(name), body) -> Let(name, body, acc)) *)
 
 
 let rec nth_snd i inner =
@@ -663,7 +666,8 @@ let rec gen_default_core =
 
 let unreachable_core e = CG.Let("$_", Observe False, e)
 
-type external_ctx = Cudd.Man.dt
+
+type external_ctx = Unused (*Removed due to Cudd, was: Cudd.Man.dt*)
 
 let rec from_external_expr_h (ctx: external_ctx) (cfg: config) ((t, e): tast) : CG.expr =
   let list_len_bits = bit_length cfg.max_list_length in
@@ -950,7 +954,7 @@ let from_external_func_optimize mgr cfg (tenv: EG.tenv) (f: EG.func) (flip_lifti
         body = optbody})
 
 let from_external_prog ?(cfg: config = default_config) (p: EG.program) : (EG.typ * CG.program) =
-  let mgr = Cudd.Man.make_d () in
+  let mgr = Unused (* Removed due to Cudd, was: Cudd.Man.make_d () *) in
   let (tenv, functions) = List.fold p.functions ~init:(Map.Poly.empty, []) ~f:(fun (tenv, flst) i ->
       let (t, conv) = from_external_func mgr cfg tenv i in
       let tenv' = Map.Poly.set tenv ~key:i.name ~data:t in
@@ -960,7 +964,7 @@ let from_external_prog ?(cfg: config = default_config) (p: EG.program) : (EG.typ
   (t, {functions = functions; body = convbody})
 
 let from_external_prog_optimize ?(cfg: config = default_config) (p: EG.program) (flip_lifting: bool) (branch_elimination: bool) (determinism: bool) : (EG.typ * CG.program) =
-  let mgr = Cudd.Man.make_d () in
+  let mgr = Unused (* Removed due to Cudd, was: Cudd.Man.make_d () *) in
   let (tenv, functions) = List.fold p.functions ~init:(Map.Poly.empty, []) ~f:(fun (tenv, flst) i ->
       let (t, conv) = from_external_func_optimize mgr cfg tenv i flip_lifting branch_elimination determinism in
       let tenv' = Map.Poly.set tenv ~key:i.name ~data:t in

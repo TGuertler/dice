@@ -1,4 +1,4 @@
-open Core
+(* open Core *)
 
 let eps = 0.00001
 
@@ -13,7 +13,7 @@ let within_epsilon x y =
 
 let log2 a = log a /. (log 2.0)
 
-let bit_length x = Int.floor_log2 x + 1
+let bit_length x = let open Core in Int.floor_log2 x + 1
 
 (** [dir_contents] returns the paths of all regular files that are
  * contained in [dir]. Each file is a path starting with [dir].
@@ -22,12 +22,19 @@ let dir_contents dir =
   let rec loop result = function
     | f::fs ->
       (match Sys.is_directory f with
-       | `Yes ->
+       | true ->
+        (* Changed these in order to figure out what was wrong, code does the same as code below
+        let file_array = Sys.readdir nf in
+        let file_list = Array.to_list file_array in
+        let add_prefix = List.map (Filename.concat nf) file_list in
+        let added_list = List.append fs add_prefix in 
+        loop result added_list*)
+        (* switched from Core.Sys to normal Sys, because Core.sys was depricated since [since 2021-04] *)
          Sys.readdir f
          |> Array.to_list
-         |> List.map ~f:(Filename.concat f)
+         |> List.map (Filename.concat f)
          |> List.append fs
          |> loop result
-       | _ -> loop (f::result) fs)
+       | false -> loop (f::result) fs)
     | []    -> result
   in loop [] [dir]

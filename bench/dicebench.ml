@@ -269,6 +269,6 @@ let command =
          Format.printf "****************************************[Ladder Non-Inlined]****************************************\n";
          bench_ladder false))
 
-let () =
-  Command.run ~version:"1.0" command
+let () = printf "I dont now how to run this yet"
+  (* Command.run ~version:"1.0" command *)
 

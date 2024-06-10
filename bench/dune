@@ -1,6 +1,6 @@
 
 (executable
- (libraries core cudd sexplib menhirLib diceLib)
+ (libraries core sexplib menhirLib diceLib)
  (name dicebench)
  (preprocess (pps ppx_jane)))
 

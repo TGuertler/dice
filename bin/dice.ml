@@ -199,7 +199,7 @@ let command =
        else List.iter r ~f:print_res
     )
 
-let () =
-  Command.run ~version:"1.0" command
+let () = printf "I dont now how to run this yet"
+  (* Command.run ~version:"1.0" command *)
 
 

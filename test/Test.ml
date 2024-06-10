@@ -10,7 +10,7 @@ let test_1 _ =
   assert_feq 0.4 (parse_and_prob prog);
   assert_feq 0.4 (parse_optimize_and_prob prog)
 
-let test_not test_ctx =
+let test_not _ =
   let prog = "let x = flip 0.4 in !x" in
   assert_feq 0.6 (parse_and_prob prog);
   assert_feq 0.6 (parse_optimize_and_prob prog)
@@ -828,7 +828,7 @@ let expression_tests =
   "test_list_ex">::test_list_ex;
   "test_bdd">::test_bdd;
   "test_lte_name">::test_lte_name;
-  "test_lt_name">::test_lt_name;
+  "test_lt_name">::test_lt_name; (**)
 ]
 
 let () =

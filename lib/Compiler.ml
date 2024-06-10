@@ -158,7 +158,7 @@ let rec compile_expr (ctx: compile_context) (tenv: tenv) (env: env) e : compiled
         {state=c2.state; z=Bdd.bdd_and ctx.man c1.z c2.z; flips=c1.flips @ c2.flips}
 
 
-  | Sample(e) -> failwith "not implemented"
+  | Sample(_) -> failwith "not implemented"
   (* | Sample(e) ->
    *   let sube = compile_expr ctx tenv env e in
    *   (\* perform sequential sampling *\)
